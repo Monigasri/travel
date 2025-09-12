@@ -1,0 +1,264 @@
+/* Tourist Spot Detail Styles */
+
+.spot-detail-container {
+  min-height: 100vh;
+  background-color: #f9fafb;
+}
+
+.spot-detail-content {
+  max-width: 1536px;
+  margin: 0 auto;
+  padding: 0 24px;
+  padding-top: 32px;
+  padding-bottom: 32px;
+}
+
+.back-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #6b7280;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  margin-bottom: 24px;
+  padding: 8px 0;
+}
+
+.back-button:hover {
+  color: #111827;
+}
+
+.back-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.hero-section {
+  position: relative;
+  height: 320px;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  margin-bottom: 32px;
+}
+
+.hero-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hero-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: flex-end;
+}
+
+.hero-content {
+  padding: 32px;
+}
+
+.hero-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 8px;
+}
+
+.hero-duration {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: white;
+  font-size: 1.125rem;
+}
+
+.duration-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.content-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+}
+
+@media (min-width: 1024px) {
+  .content-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.content-card {
+  background-color: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  padding: 24px;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.card-header-icon {
+  width: 24px;
+  height: 24px;
+  color: #687FE5;
+}
+
+.card-header-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.places-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.place-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.place-bullet {
+  width: 8px;
+  height: 8px;
+  background-color: #687FE5;
+  border-radius: 50%;
+  margin-top: 8px;
+  flex-shrink: 0;
+}
+
+.place-text {
+  color: #374151;
+}
+
+.hotels-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.hotel-card {
+  border: 1px solid #f3f4f6;
+  border-radius: 8px;
+  padding: 16px;
+  transition: box-shadow 0.2s ease;
+}
+
+.hotel-card:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.hotel-name {
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 8px;
+}
+
+.hotel-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.hotel-rating {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.rating-star {
+  width: 16px;
+  height: 16px;
+  color: #fbbf24;
+  fill: currentColor;
+}
+
+.hotel-price {
+  color: #687FE5;
+  font-weight: 600;
+}
+
+.fun-spots-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.fun-spot-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.fun-spot-bullet {
+  width: 8px;
+  height: 8px;
+  background-color: #ec4899;
+  border-radius: 50%;
+  margin-top: 8px;
+  flex-shrink: 0;
+}
+
+.fun-spot-text {
+  color: #374151;
+}
+
+.cta-section {
+  text-align: center;
+  margin-top: 48px;
+}
+
+.cta-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 32px;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: white;
+  background-color: #687FE5;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  text-decoration: none;
+}
+
+.cta-button:hover {
+  background-color: #5a6fd8;
+  transform: scale(1.05);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.cta-button:active {
+  transform: scale(0.95);
+}
+
+.cta-icon {
+  width: 20px;
+  height: 20px;
+}

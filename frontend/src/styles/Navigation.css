@@ -1,0 +1,69 @@
+/* Navigation Styles */
+.navigation {
+  background-color: white;
+  border-bottom: 1px solid #f3f4f6;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  padding: 16px 24px;
+}
+
+.navigation-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.logo-icon {
+  background-color: #687FE5;
+  padding: 8px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo-map-pin {
+  width: 24px;
+  height: 24px;
+  color: white;
+}
+
+.logo-text {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.country-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.globe-icon {
+  width: 20px;
+  height: 20px;
+  color: #6b7280;
+}
+
+.country-select {
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 0.875rem;
+  background-color: white;
+  cursor: pointer;
+}
+
+.country-select:focus {
+  outline: none;
+  border-color: #687FE5;
+  box-shadow: 0 0 0 3px rgba(104,127,229,0.1);
+}
