@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Lottie from "lottie-react";
 import loadingAnimation from "../assets/loading.json"; // adjust path if needed
 import "../styles/LoginPage.css"; // import the CSS file
@@ -10,9 +11,19 @@ const Login = () => {
   const [rememberMe, setRememberMe] = useState(false);
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    // Simulate login
+    const res = await fetch("http://localhost:5000/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ email, password }),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      alert(err.error || "Login failed");
+      return;
+    }
     navigate("/home");
   };
 
@@ -87,11 +98,17 @@ const Login = () => {
 
             <button
               type="button"
-              onClick={handleGoogleLogin}
+              onClick={() => {
+                window.location.href = "http://localhost:5000/auth/google";
+              }}
               className="google-btn"
             >
               <span>Log in with Google</span>
             </button>
+
+            <div style={{ textAlign: 'center', marginTop: '16px' }}>
+              Already have an account? If not, <Link to="/">create one</Link>
+            </div>
 
                       </form>
         </div>
