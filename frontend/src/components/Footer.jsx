@@ -4,15 +4,32 @@ import '../styles/Footer.css';
 
 const Footer = () => {
   const [contactForm, setContactForm] = useState({ name: '', email: '', message: '' });
+  const [status, setStatus] = useState('');
 
   const handleInputChange = (field, value) => {
     setContactForm(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    alert('Thank you for your message! We will get back to you soon.');
-    setContactForm({ name: '', email: '', message: '' });
+    try {
+      const res = await fetch('http://localhost:5000/api/feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(contactForm),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        setStatus(data.message || 'Feedback sent successfully!');
+        setContactForm({ name: '', email: '', message: '' });
+      } else {
+        setStatus(data.error || 'Failed to send feedback.');
+      }
+    } catch (err) {
+      console.error(err);
+      setStatus('Server error. Please try again later.');
+    }
   };
 
   return (
@@ -50,6 +67,7 @@ const Footer = () => {
                 />
                 <button type="submit" className="contact-submit">Send Message</button>
               </form>
+              {status && <p style={{ marginTop: '8px', color: 'white' }}>{status}</p>}
             </div>
           </div>
 
@@ -63,15 +81,7 @@ const Footer = () => {
               
                 Our mission is to help travelers discover amazing destinations while reducing the stress of planning. 
                 From solo adventures to family vacations, we've got you covered. 
-              
               </p>
-
-              {/* Contact Info */}
-              {/* <div className="contact-info">
-                <div className="contact-item"><Mail className="contact-icon" /> contact@travelplan.com</div>
-                <div className="contact-item"><Phone className="contact-icon" /> +1 (555) 123-4567</div>
-                <div className="contact-item"><MapPin className="contact-icon" /> 123 Travel Street, Adventure City</div>
-              </div> */}
 
               {/* Social Media */}
               <div className="social-media">

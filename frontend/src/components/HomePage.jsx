@@ -463,7 +463,7 @@ const HomePage = () => {
                   </div>
                 </div>
               )}
-              {activeDestination.experiences && (
+              {/* {activeDestination.experiences && (
                 <div className="destination-modal-experiences">
                   {activeDestination.experiences.map((exp, idx) => (
                     <div className="experience-pill" key={idx}>
@@ -472,7 +472,7 @@ const HomePage = () => {
                     </div>
                   ))}
                 </div>
-              )}
+              )} */}
               <div className="destination-modal-cta">
                 <button className="destination-cta-button" onClick={() => navigate('/suggestion')}>
                   Start Planning

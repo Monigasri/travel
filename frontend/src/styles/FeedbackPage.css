@@ -1,0 +1,46 @@
+.feedback-container {
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 0 24px;
+}
+
+.feedback-container h1 {
+  text-align: center;
+  font-size: 2.5rem;
+  margin-bottom: 32px;
+}
+
+.feedback-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+.feedback-card {
+  background: #f3f0fa;
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s;
+}
+
+.feedback-card:hover {
+  transform: translateY(-5px);
+}
+
+.feedback-card h3 {
+  margin-bottom: 8px;
+  font-size: 1.2rem;
+}
+
+.feedback-card p {
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.feedback-card .timestamp {
+  font-size: 0.8rem;
+  color: #555;
+  text-align: right;
+}
