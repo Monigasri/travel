@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Link } from "react-router-dom";
 import Lottie from "lottie-react";
 import loadingAnimation from "../assets/loading.json"; // adjust path if needed
@@ -9,7 +9,17 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const error = params.get("error");
+    if (error) {
+      setErrorMessage(error);
+    }
+  }, [location]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -24,11 +34,6 @@ const Login = () => {
       alert(err.error || "Login failed");
       return;
     }
-    navigate("/home");
-  };
-
-  const handleGoogleLogin = () => {
-    // Simulate Google login
     navigate("/home");
   };
 
@@ -51,6 +56,11 @@ const Login = () => {
           <div className="login-header">
             <h1>Welcome Back!</h1>
             <p>Sign in to continue your travel planning</p>
+            {errorMessage && (
+              <div className="error-message" style={{ color: "red", marginBottom: "10px" }}>
+                {errorMessage}
+              </div>
+            )}
           </div>
 
           <form onSubmit={handleLogin} className="login-form">
@@ -110,7 +120,7 @@ const Login = () => {
               Already have an account? If not, <Link to="/">create one</Link>
             </div>
 
-                      </form>
+          </form>
         </div>
       </div>
     </div>

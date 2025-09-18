@@ -9,14 +9,20 @@ const router = express.Router();
 router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
 // Google OAuth callback
-router.get(
-  '/google/callback',
-  passport.authenticate('google', { failureRedirect: 'http://localhost:5173/' }),
-  (req, res) => {
-    // On success, redirect to the frontend app
-    res.redirect('http://localhost:5173/home');
-  }
-);
+router.get('/google/callback', (req, res, next) => {
+  passport.authenticate('google', (err, user, info) => {
+    if (err || !user) {
+      const errorMsg = err?.message || info?.message || 'Google sign-in failed';
+      return res.redirect(`http://localhost:5173/?error=${encodeURIComponent(errorMsg)}`);
+    }
+    req.logIn(user, (err2) => {
+      if (err2) {
+        return res.redirect(`http://localhost:5173/?error=${encodeURIComponent('Login after Google auth failed')}`);
+      }
+      res.redirect('http://localhost:5173/home');
+    });
+  })(req, res, next);
+});
 
 // Auth status helper
 router.get('/status', (req, res) => {

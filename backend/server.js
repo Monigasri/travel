@@ -12,6 +12,7 @@ mongoose.connect('mongodb://127.0.0.1:27017/ai-travel-planner')
   .catch((err) => console.log('MongoDB connection error:', err));
 
 const authRoutes = require('./routes/auth');
+const groqRoutes = require('./routes/groq');
 
 const app = express();
 
@@ -40,6 +41,7 @@ require('./config/passport');
 
 // Routes
 app.use('/auth', authRoutes);
+app.use('/api/groq', groqRoutes);
 
 // Start server
 const PORT = process.env.PORT || 5000;

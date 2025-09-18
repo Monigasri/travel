@@ -10,9 +10,8 @@ import SuggestionPlanningPage from "./components/SuggestionPlanningPage";
 import ThemePlanningPage from "./components/ThemePlanningPage";
 import DetailedPage from "./components/DetailedPage";
 import AuthCallback from "./components/AuthCallback";
-import SearchResultsPage from "./components/SearchResultsPage";
 import FeedbackPage from "./components/FeedbackPage";
-
+import SearchResult from "./components/SearchResult"; 
 
 function App() {
   return (
@@ -21,7 +20,7 @@ function App() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/auth/callback" element={<AuthCallback />} />
       <Route path="/home" element={<HomePage />} />
-      <Route path="/search" element={<SearchResultsPage />} />
+      <Route path="/search" element={<SearchResult />} />
       <Route path="/manual" element={<ManualPlanningPage />} />
       <Route path="/suggestion" element={<SuggestionPlanningPage />} />
       <Route path="/theme" element={<ThemePlanningPage />} />

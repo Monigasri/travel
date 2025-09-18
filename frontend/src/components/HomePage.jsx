@@ -207,6 +207,51 @@ const HomePage = () => {
     return () => window.removeEventListener('keydown', handleEsc);
   }, []);
 
+  // ---------------------------
+  // Added: attach Enter key and click behavior to existing search input/icon
+  // (We do this via DOM listeners so none of your original JSX lines are changed)
+  // ---------------------------
+  const handleSearchSubmit = (value) => {
+    const q = (value ?? searchQuery)?.trim();
+    if (q) {
+      navigate(`/search?query=${encodeURIComponent(q)}`);
+    }
+  };
+
+  useEffect(() => {
+    // attach listeners to elements that already exist in your JSX (class names: .search-input, .search-icon)
+    const inputEl = typeof document !== 'undefined' ? document.querySelector('.search-input') : null;
+    const iconEl = typeof document !== 'undefined' ? document.querySelector('.search-icon') : null;
+
+    if (!inputEl && !iconEl) return;
+
+    const keyHandler = (e) => {
+      if (e.key === 'Enter') {
+        // prevent default form submission behavior if any
+        e.preventDefault();
+        handleSearchSubmit(inputEl.value);
+      }
+    };
+
+    const clickHandler = () => {
+      handleSearchSubmit(inputEl.value);
+    };
+
+    if (inputEl) inputEl.addEventListener('keydown', keyHandler);
+    if (iconEl) {
+      iconEl.style.cursor = 'pointer';
+      iconEl.addEventListener('click', clickHandler);
+    }
+
+    // cleanup
+    return () => {
+      if (inputEl) inputEl.removeEventListener('keydown', keyHandler);
+      if (iconEl) iconEl.removeEventListener('click', clickHandler);
+    };
+    // intentionally include searchQuery so the effect can see updates when user types,
+    // and include navigate for react-hooks exhaustive deps compliance.
+  }, [searchQuery, navigate]);
+
   const themes = [
     { name: 'Solo Trip', icon: '🎒', description: 'Perfect for independent explorers' },
     { name: 'Education Trip', icon: '📚', description: 'Learn while you travel' },
@@ -228,6 +273,31 @@ const HomePage = () => {
   const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % touristSpots.length);
   const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + touristSpots.length) % touristSpots.length);
   const handleSpotClick = (spotId) => navigate(`/spot/${spotId}`);
+
+  // <<< ADDED: auto-advance carousel every 5 seconds (non-destructive)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % touristSpots.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [touristSpots.length]);
+  // <<< END ADDED
+
+  // <<< ADDED: fix manual button that has trailing space in JSX onClick (non-destructive)
+  useEffect(() => {
+    const manualBtn = typeof document !== 'undefined' ? document.querySelector('.info-box-button') : null;
+    if (!manualBtn) return;
+    const manualHandler = (e) => {
+      e.preventDefault();
+      // navigate to trimmed path
+      navigate('/manual');
+    };
+    manualBtn.addEventListener('click', manualHandler);
+    return () => {
+      manualBtn.removeEventListener('click', manualHandler);
+    };
+  }, [navigate]);
+  // <<< END ADDED
 
   return (
     <div className="home-container">
@@ -340,7 +410,7 @@ const HomePage = () => {
               From hidden gems to must-see attractions, we’ll help you discover unforgettable
               experiences and make memories that last a lifetime.
             </p>
-            <button className="info-box-button" onClick={() => navigate('/manual ')}>
+            <button className="info-box-button" onClick={() => navigate('/manual ' )}>
               Start Planning <ArrowRight className="button-icon" />
             </button>
           </div>
