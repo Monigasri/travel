@@ -231,21 +231,13 @@
 
 .timeline-item {
   display: grid;
-  grid-template-columns: 120px 1fr;
-  gap: 24px;
-  margin-bottom: 32px;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
   position: relative;
 }
 
-.timeline-item:not(:last-child)::after {
-  content: '';
-  position: absolute;
-  left: 60px;
-  top: 60px;
-  bottom: -32px;
-  width: 2px;
-  background: linear-gradient(to bottom, #e5e7eb, transparent);
-}
+/* Removed vertical connector line and time column */
 
 .timeline-time {
   display: flex;
@@ -257,6 +249,7 @@
   position: relative;
 }
 
+/* .timeline-time::before removed along with time display */
 .timeline-time::before {
   content: '';
   position: absolute;
@@ -320,6 +313,18 @@
   text-transform: capitalize;
 }
 
+.hidden-gem-badge {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 8px;
+  padding: 4px 8px;
+  font-size: 11px;
+  border-radius: 999px;
+  background: #f5e8ff;
+  color: #6b21a8;
+  border: 1px solid #e9d5ff;
+}
+
 .item-type.spot {
   background: #ecfeff;
   border-color: #06b6d4;
@@ -362,6 +367,21 @@
   color: #6b7280;
   font-size: 14px;
   margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.mini-btn {
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  color: #374151;
+  border-radius: 999px;
+  padding: 4px 8px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.mini-btn:hover {
+  background: #f3f4f6;
 }
 
 .item-description {
@@ -784,12 +804,12 @@
   }
   
   .timeline-item {
-    grid-template-columns: 100px 1fr;
-    gap: 16px;
+    grid-template-columns: 1fr;
+    gap: 12px;
   }
   
   .timeline-time {
-    font-size: 12px;
+    display: none;
   }
   
   .day-navigation {
@@ -809,7 +829,7 @@
   }
   
   .timeline-time {
-    justify-content: center;
+    display: none;
   }
   
   .timeline-item:not(:last-child)::after {

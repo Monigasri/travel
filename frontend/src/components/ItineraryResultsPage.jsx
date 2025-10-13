@@ -82,6 +82,73 @@ const ItineraryResultsPage = () => {
     URL.revokeObjectURL(url);
   };
 
+  const toIcsDateTime = (dateStr, timeStr) => {
+    try {
+      const [h, m] = String(timeStr || '09:00').split(':').map(Number);
+      const d = new Date(dateStr);
+      d.setHours(h || 9, m || 0, 0, 0);
+      const pad = (n) => String(n).padStart(2, '0');
+      return `${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}T${pad(d.getHours())}${pad(d.getMinutes())}00`;
+    } catch {
+      return `${dateStr.replaceAll('-','')}T090000`;
+    }
+  };
+
+  const addMinutes = (dateStr, timeStr, mins) => {
+    const [h, m] = String(timeStr || '09:00').split(':').map(Number);
+    const d = new Date(dateStr);
+    d.setHours(h || 9, m || 0, 0, 0);
+    d.setMinutes(d.getMinutes() + (mins || 60));
+    const pad = (n) => String(n).padStart(2, '0');
+    return `${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}T${pad(d.getHours())}${pad(d.getMinutes())}00`;
+  };
+
+  const handleDownloadICS = () => {
+    const CRLF = '\r\n';
+    let ics = `BEGIN:VCALENDAR${CRLF}VERSION:2.0${CRLF}PRODID:-//AI Travel Planner//EN${CRLF}`;
+
+    itinerary.itinerary.forEach(day => {
+      (day.items || []).forEach(item => {
+        const dtStart = toIcsDateTime(day.date, item.time);
+        const dtEnd = addMinutes(day.date, item.time, item.durationMins || 60);
+        const summary = `${item.name}`;
+        const location = `${item.address || ''}`;
+        const desc = `${item.description || ''}`.replace(/\n/g, ' ');
+        ics += `BEGIN:VEVENT${CRLF}`;
+        ics += `DTSTART:${dtStart}${CRLF}`;
+        ics += `DTEND:${dtEnd}${CRLF}`;
+        ics += `SUMMARY:${summary}${CRLF}`;
+        if (location) ics += `LOCATION:${location}${CRLF}`;
+        if (desc) ics += `DESCRIPTION:${desc}${CRLF}`;
+        ics += `END:VEVENT${CRLF}`;
+      });
+    });
+
+    ics += `END:VCALENDAR${CRLF}`;
+
+    const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${itinerary.city}-${itinerary.days}days.ics`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const openInMaps = (name, address) => {
+    const q = encodeURIComponent(`${name || ''} ${address || ''} ${itinerary.city || ''}`.trim());
+    window.open(`https://www.google.com/maps/search/?api=1&query=${q}`, '_blank');
+  };
+
+  const copyAddress = async (text) => {
+    try {
+      await navigator.clipboard.writeText(text || '');
+      alert('Address copied to clipboard');
+    } catch {
+      // ignore
+    }
+  };
+
   if (!itinerary) {
     return (
       <div className="loading-container">
@@ -107,7 +174,7 @@ const ItineraryResultsPage = () => {
               <h1>{itinerary.city}</h1>
               <p className="trip-duration">{itinerary.days} Days • {new Date(itinerary.startDate).toLocaleDateString()} onwards</p>
             </div>
-            <div className="header-actions">
+          <div className="header-actions">
               <button className="action-btn" onClick={handleShare}>
                 <Share2 size={18} />
                 Share
@@ -115,6 +182,10 @@ const ItineraryResultsPage = () => {
               <button className="action-btn" onClick={handleDownload}>
                 <Download size={18} />
                 Download
+              </button>
+              <button className="action-btn" onClick={handleDownloadICS}>
+                <Download size={18} />
+                Add to Calendar (.ics)
               </button>
             </div>
           </div>
@@ -133,7 +204,7 @@ const ItineraryResultsPage = () => {
                 <span className="day-date">{new Date(day.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
               </button>
             ))}
-          </div>
+          </div><br></br>
 
           {/* Active Day Content */}
           {itinerary.itinerary?.map((day) => (
@@ -147,11 +218,6 @@ const ItineraryResultsPage = () => {
                 <div className="timeline-container">
                   {day.items?.map((item, idx) => (
                     <div key={idx} className={`timeline-item ${item.category}`}>
-                      <div className="timeline-time">
-                        <Clock size={16} />
-                        <span>{item.time}</span>
-                      </div>
-                      
                       <div className="timeline-content">
                         <div className="item-header">
                           <div className="item-title">
@@ -162,6 +228,9 @@ const ItineraryResultsPage = () => {
                               {item.category === 'hotel' && <Bed size={14} />}
                               {item.type}
                             </span>
+                            {item.isHiddenGem && (
+                              <span className="hidden-gem-badge">Hidden Gem</span>
+                            )}
                           </div>
                           <button 
                             className={`favorite-btn ${favorites.has(`${day.day}-${idx}`) ? 'active' : ''}`}
@@ -175,6 +244,8 @@ const ItineraryResultsPage = () => {
                           <div className="address-info">
                             <MapPin size={16} />
                             <span>{item.address}</span>
+                            <button className="mini-btn" onClick={() => openInMaps(item.name, item.address)}>Open in Maps</button>
+                            <button className="mini-btn" onClick={() => copyAddress(item.address)}>Copy</button>
                           </div>
                           
                           <p className="item-description">{item.description}</p>
@@ -436,6 +507,25 @@ const ItineraryResultsPage = () => {
                       <div className="info-item"><strong>Money:</strong> {itinerary.tips.money}</div>
                     )}
                   </div>
+                </div>
+              </div>
+            )}
+
+            {/* Hidden Gems */}
+            {Array.isArray(itinerary.hiddenGems) && itinerary.hiddenGems.length > 0 && (
+              <div className="recommendation-section">
+                <h3>
+                  <MapPin size={18} />
+                  Hidden Gems
+                </h3>
+                <div className="recommendations-list">
+                  {itinerary.hiddenGems.map((gem, i) => (
+                    <div key={i} className="recommendation-card spot">
+                      <h4>{gem.name}</h4>
+                      {gem.address && <p className="address">{gem.address}</p>}
+                      {gem.description && <p className="specialties">{gem.description}</p>}
+                    </div>
+                  ))}
                 </div>
               </div>
             )}
