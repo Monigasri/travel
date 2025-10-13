@@ -12,6 +12,8 @@ import DetailedPage from "./components/DetailedPage";
 import AuthCallback from "./components/AuthCallback";
 import FeedbackPage from "./components/FeedbackPage";
 import SearchResult from "./components/SearchResult"; 
+import ChatbotPage from "./components/ChatbotPage";
+import ItineraryResultsPage from "./components/ItineraryResultsPage";
 
 function App() {
   return (
@@ -28,6 +30,8 @@ function App() {
       <Route path="/details/:cityName" element={<DetailedPage />} />
       <Route path="/profile" element={<ProfilePage />} />
       <Route path="/feedbacks" element={<FeedbackPage />} />
+      <Route path="/chatbot" element={<ChatbotPage />} />
+      <Route path="/itinerary-results" element={<ItineraryResultsPage />} />
     </Routes>
   );
 }

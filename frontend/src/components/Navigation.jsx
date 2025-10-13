@@ -1,9 +1,11 @@
 import React from 'react';
-import { MapPin, Globe } from 'lucide-react';
+import { MapPin, Globe, MessageSquare } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import '../styles/Navigation.css';
 
 const Navigation = ({ selectedCountry = 'India', onCountryChange }) => {
   const countries = ['India', 'Japan', 'Thailand', 'USA', 'France', 'Italy'];
+  const navigate = useNavigate();
 
   return (
     <nav className="navigation">
@@ -16,20 +18,31 @@ const Navigation = ({ selectedCountry = 'India', onCountryChange }) => {
           <span className="logo-text">TravelPlan</span>
         </div>
 
-        {/* Country Selector */}
-        <div className="country-selector">
-          <Globe className="globe-icon" />
-          <select
-            value={selectedCountry}
-            onChange={(e) => onCountryChange?.(e.target.value)}
-            className="country-select"
+        <div className="nav-right-section">
+          {/* Chatbot Button */}
+          <button 
+            className="chatbot-button"
+            onClick={() => navigate('/chatbot')}
           >
-            {countries.map((country) => (
-              <option key={country} value={country}>
-                {country}
-              </option>
-            ))}
-          </select>
+            <MessageSquare className="chatbot-icon" />
+            <span>Chatbot</span>
+          </button>
+
+          {/* Country Selector */}
+          <div className="country-selector">
+            <Globe className="globe-icon" />
+            <select
+              value={selectedCountry}
+              onChange={(e) => onCountryChange?.(e.target.value)}
+              className="country-select"
+            >
+              {countries.map((country) => (
+                <option key={country} value={country}>
+                  {country}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
       </div>
     </nav>

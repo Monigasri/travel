@@ -22,6 +22,7 @@ const Feedback = mongoose.model('Feedback', new mongoose.Schema({
 
 const authRoutes = require('./routes/auth');
 const groqRoutes = require('./routes/groq');
+const chatbotRoutes = require('./routes/chatbot');
 
 const app = express();
 
@@ -51,6 +52,8 @@ require('./config/passport');
 // Routes
 app.use('/auth', authRoutes);
 app.use('/api/groq', groqRoutes);
+app.use('/api/chatbot', chatbotRoutes);
+app.use('/api/itinerary', require('./routes/itinerary'));
 
 // Feedback route
 app.post('/api/feedback', async (req, res) => {

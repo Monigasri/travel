@@ -41,6 +41,35 @@
   color: #111827;
 }
 
+.nav-right-section {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.chatbot-button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #687FE5;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.chatbot-button:hover {
+  background-color: #5569c7;
+}
+
+.chatbot-icon {
+  width: 18px;
+  height: 18px;
+}
+
 .country-selector {
   display: flex;
   align-items: center;

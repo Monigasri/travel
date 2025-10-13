@@ -5,6 +5,41 @@ const axios = require('axios');
 // Environment variables should be loaded in server.js
 const GROQ_API_KEY = process.env.GROQ_API_KEY;
 
+// Helper: try to extract a valid JSON object from arbitrary text
+function extractJSONObject(text) {
+  if (!text || typeof text !== 'string') {
+    throw new Error('No text to parse');
+  }
+
+  // Strip code fences if present
+  let t = text.trim()
+    .replace(/^```(?:json)?\s*/i, '')
+    .replace(/\s*```$/i, '')
+    .trim();
+
+  // First, try direct parse
+  try {
+    return JSON.parse(t);
+  } catch (_) { /* continue */ }
+
+  // Fallback: attempt to locate the first balanced JSON object by braces
+  const firstBrace = t.indexOf('{');
+  const lastBrace = t.lastIndexOf('}');
+  if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
+    const candidate = t.slice(firstBrace, lastBrace + 1);
+    // Remove trailing commas like ,} or ,]
+    const cleaned = candidate.replace(/,\s*(?=[}\]])/g, '');
+    try {
+      return JSON.parse(cleaned);
+    } catch (e2) {
+      // As a final attempt, remove non-printable characters
+      const sanitized = cleaned.replace(/\u0000|\u0001|\u0002|\u0003/g, '');
+      return JSON.parse(sanitized);
+    }
+  }
+  throw new Error('Could not find JSON object in text');
+}
+
 // Endpoint to proxy Groq API requests
 router.post('/search', async (req, res) => {
   try {
@@ -21,20 +56,22 @@ router.post('/search', async (req, res) => {
     
     console.log(`Processing search request for query: "${query}"`);
 
-
     // Make request to Groq API
     const response = await axios.post(
       'https://api.groq.com/openai/v1/chat/completions',
       {
         model: "llama-3.3-70b-versatile",
+        temperature: 0.2,
+        // Request JSON if supported; if not, downstream parsing still handles text
+        response_format: { type: 'json_object' },
         messages: [
           {
             role: "system",
-            content: "You are a helpful travel assistant. Respond only with valid JSON in the following structure: { \"touristSpots\": [{\"name\": \"Spot Name\", \"address\": \"Full Address\", \"description\": \"Brief description\", \"rating\": 4.5, \"bestTimeToVisit\": \"Season or time\"}], \"dishes\": [{\"name\": \"Dish Name\", \"description\": \"Brief description\", \"whereToTry\": \"Restaurant or area\", \"price\": \"Budget range\"}], \"hotels\": [{\"name\": \"Hotel Name\", \"address\": \"Full Address\", \"description\": \"Brief description\", \"priceRange\": \"Budget range\", \"rating\": 4.5}], \"restaurants\": [{\"name\": \"Restaurant Name\", \"address\": \"Full Address\", \"description\": \"Brief description\", \"specialties\": \"Famous dishes\", \"priceRange\": \"Budget range\", \"rating\": 4.5}] }. Include at least 3-5 items per category if possible. Do not include any additional text outside the JSON.",
+            content: "You are a travel data service. Output only valid JSON with keys touristSpots, dishes, hotels, restaurants. No markdown, no code fences, no commentary.",
           },
           {
             role: "user",
-            content: `For the location "${query}", provide detailed information about famous tourist spots, popular and authentic dishes, famous hotels, and famous restaurants. Include addresses, descriptions, price ranges, and ratings where applicable.`,
+            content: `For the location "${query}", provide detailed information about famous tourist spots, popular and authentic dishes, famous hotels, and famous restaurants. Include addresses, descriptions, price ranges, and ratings where applicable. Return ONLY a JSON object with keys: touristSpots, dishes, hotels, restaurants.`,
           },
         ],
       },
@@ -49,19 +86,14 @@ router.post('/search', async (req, res) => {
     // Process the response from Groq
     try {
       // Extract the content from the Groq response
-      const aiText = response.data.choices[0].message.content.trim();
-      
-      // Parse the JSON from the AI response
-      const parsedData = JSON.parse(aiText);
-      
-      // Return the parsed data directly
-      res.json(parsedData);
+      const aiText = String(response.data?.choices?.[0]?.message?.content || '').trim();
+      const parsedData = extractJSONObject(aiText);
+      // Return the parsed data directly (normalized structure)
+      return res.json(parsedData);
     } catch (parseError) {
-      console.error('Error parsing Groq response:', parseError);
-      console.log('Raw response:', response.data);
-      
-      // Return the original response if parsing fails
-      res.json(response.data);
+      console.warn('Groq text was not directly parseable as JSON, returning raw API JSON for frontend handling.');
+      // Return the original Groq API JSON; the frontend already knows how to parse choices[0].message.content
+      return res.json(response.data);
     }
   } catch (error) {
     console.error('Error calling Groq API:', error.message);

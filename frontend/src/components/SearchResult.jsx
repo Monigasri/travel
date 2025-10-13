@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Navigation from "../components/Navigation";
 import { MapPin, Star, DollarSign, Clock } from "lucide-react";
 import "../styles/SearchResult.css";
@@ -10,6 +10,7 @@ function useQuery() {
 
 const SearchResult = () => {
   const query = useQuery().get("query") || "";
+  const navigate = useNavigate();
   const [results, setResults] = useState({
     touristSpots: [],
     dishes: [],
@@ -18,6 +19,7 @@ const SearchResult = () => {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [itineraryLoading, setItineraryLoading] = useState(false);
 
   // We're now using the backend API instead of directly calling Groq API
   // No need to handle API keys in the frontend anymore
@@ -288,13 +290,50 @@ const SearchResult = () => {
     </div>
   );
 
+  const generateItinerary = async () => {
+    if (!query) return;
+    try {
+      setItineraryLoading(true);
+      const today = new Date().toISOString().split('T')[0];
+      const payload = {
+        destination: query,
+        startDate: today,
+        days: 3,
+        budget: 'mid',
+        travelers: 2,
+        pace: 'balanced',
+        interests: []
+      };
+      const res = await fetch('http://localhost:5000/api/itinerary', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || 'Failed to generate itinerary');
+      }
+      const data = await res.json();
+      navigate('/itinerary-results', { state: { itinerary: data } });
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setItineraryLoading(false);
+    }
+  };
+
   return (
     <div className="search-results-page">
       <Navigation />
-
+      
       <div className="results-container">
-        <h2 className="results-title">Search Results for "{query}"</h2>
-
+        <div className="results-header-row">
+          <h2 className="results-title">Search Results for "{query}"</h2>
+          <button className="action-btn" onClick={generateItinerary} disabled={!query || itineraryLoading}>
+            {itineraryLoading ? 'Generating…' : 'Generate 3‑day Itinerary'}
+          </button>
+        </div>
+        
         {loading ? (
           <div className="loading">
             <div className="loading-spinner"></div>

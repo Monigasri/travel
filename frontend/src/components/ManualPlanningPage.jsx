@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../styles/ManualPlanningPage.css';
+import '../styles/Planner.css';
 
 const ManualPlanningPage = ({ onNavigate }) => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
+    destination: '',
     startDate: '',
     endDate: '',
     places: '',
@@ -14,6 +18,9 @@ const ManualPlanningPage = ({ onNavigate }) => {
     interests: [],
     specialNotes: ''
   });
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [itinerary, setItinerary] = useState(null);
+  const [planError, setPlanError] = useState(null);
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -30,11 +37,54 @@ const ManualPlanningPage = ({ onNavigate }) => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const dateDiffDays = (start, end) => {
+    try {
+      const s = new Date(start);
+      const e = new Date(end);
+      if (isNaN(s) || isNaN(e)) return null;
+      const msPerDay = 24 * 60 * 60 * 1000;
+      const diff = Math.round((e - s) / msPerDay) + 1; // inclusive
+      return diff > 0 ? diff : null;
+    } catch { return null; }
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Trip plan data:', formData);
-    // Here you would typically send the data to a backend or process it
-    alert('Trip plan generated! (This would connect to your planning logic)');
+    setPlanError(null);
+    setIsGenerating(true);
+    setItinerary(null);
+    try {
+      const days = dateDiffDays(formData.startDate, formData.endDate);
+      if (!days) throw new Error('Invalid dates. Please check start and end dates.');
+      const destination = (formData.destination || formData.places || '').trim();
+      if (!destination) throw new Error('Please enter a destination.');
+
+      const payload = {
+        destination,
+        startDate: formData.startDate,
+        days,
+        budget: 'mid',
+        travelers: 2,
+        pace: 'balanced',
+        interests: formData.interests,
+      };
+
+      const res = await fetch('http://localhost:5000/api/itinerary', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || 'Failed to generate itinerary');
+      }
+      const data = await res.json();
+      // Navigate to results page with the generated itinerary
+      navigate('/itinerary-results', { state: { itinerary: data } });
+    } catch (err) {
+      setPlanError(err.message);
+      setIsGenerating(false);
+    }
   };
 
   const interestOptions = [
@@ -59,6 +109,19 @@ const ManualPlanningPage = ({ onNavigate }) => {
       <form onSubmit={handleSubmit} className="planning-form">
         <div className="form-container">
           <div className="form-grid">
+            <div className="form-group">
+              <label htmlFor="destination">Destination</label>
+              <input
+                type="text"
+                id="destination"
+                name="destination"
+                value={formData.destination}
+                onChange={handleInputChange}
+                placeholder="e.g., Jaipur, India"
+                required
+              />
+            </div>
+
             <div className="form-group">
               <label htmlFor="startDate">Start Date</label>
               <input
@@ -242,11 +305,13 @@ const ManualPlanningPage = ({ onNavigate }) => {
             </div>
           </div>
 
-          <button type="submit" className="submit-btn">
-            Generate My Trip Plan
+          <button type="submit" className="submit-btn" disabled={isGenerating}>
+            {isGenerating ? 'Generating...' : 'Generate My Trip Plan'}
           </button>
+          {planError && <div className="planner-error" style={{ marginTop: 12 }}>{planError}</div>}
         </div>
       </form>
+
     </div>
   );
 };

@@ -5,6 +5,7 @@ import Navigation from './Navigation';
 import Footer from './Footer';
 import '../styles/HomePage.css';
 import '../styles/InfoBox.css';
+import '../styles/Planner.css';
 import Lottie from "lottie-react";
 import travelAnimation from "../assets/Man Planning A Sightseeing Route.json";
 
@@ -16,6 +17,19 @@ const HomePage = () => {
   const [activeDestination, setActiveDestination] = useState(null);
   const [isThemeModalOpen, setIsThemeModalOpen] = useState(false);
   const [activeTheme, setActiveTheme] = useState(null);
+  const [showPlanner, setShowPlanner] = useState(false);
+  const [planningForm, setPlanningForm] = useState({
+    destination: '',
+    startDate: '',
+    days: 3,
+    budget: 'mid',
+    travelers: 2,
+    pace: 'balanced',
+    interests: ''
+  });
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [itinerary, setItinerary] = useState(null);
+  const [planError, setPlanError] = useState(null);
   const navigate = useNavigate();
 
   const destinations = [
@@ -283,21 +297,6 @@ const HomePage = () => {
   }, [touristSpots.length]);
   // <<< END ADDED
 
-  // <<< ADDED: fix manual button that has trailing space in JSX onClick (non-destructive)
-  useEffect(() => {
-    const manualBtn = typeof document !== 'undefined' ? document.querySelector('.info-box-button') : null;
-    if (!manualBtn) return;
-    const manualHandler = (e) => {
-      e.preventDefault();
-      // navigate to trimmed path
-      navigate('/manual');
-    };
-    manualBtn.addEventListener('click', manualHandler);
-    return () => {
-      manualBtn.removeEventListener('click', manualHandler);
-    };
-  }, [navigate]);
-  // <<< END ADDED
 
   return (
     <div className="home-container">
@@ -410,11 +409,198 @@ const HomePage = () => {
               From hidden gems to must-see attractions, we’ll help you discover unforgettable
               experiences and make memories that last a lifetime.
             </p>
-            <button className="info-box-button" onClick={() => navigate('/manual ' )}>
+            <button className="info-box-button" onClick={() => navigate('/manual')}>
               Start Planning <ArrowRight className="button-icon" />
             </button>
           </div>
         </div>  <br></br><br></br><br></br>
+
+        {/* Planner Section */}
+        {showPlanner && (
+          <section className="planner-section">
+            <h2 className="planner-title">Plan your trip</h2>
+            <form className="planner-form" onSubmit={async (e) => {
+              e.preventDefault();
+              setPlanError(null);
+              setIsGenerating(true);
+              setItinerary(null);
+              try {
+                const payload = {
+                  destination: planningForm.destination,
+                  startDate: planningForm.startDate,
+                  days: Number(planningForm.days),
+                  budget: planningForm.budget,
+                  travelers: Number(planningForm.travelers),
+                  pace: planningForm.pace,
+                  interests: planningForm.interests
+                    .split(',')
+                    .map(s => s.trim())
+                    .filter(Boolean),
+                };
+                const res = await fetch('http://localhost:5000/api/itinerary', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(payload)
+                });
+                if (!res.ok) {
+                  const err = await res.json().catch(() => ({}));
+                  throw new Error(err.error || 'Failed to generate itinerary');
+                }
+                const data = await res.json();
+                setItinerary(data);
+              } catch (err) {
+                setPlanError(err.message);
+              } finally {
+                setIsGenerating(false);
+              }
+            }}>
+              <div className="planner-grid">
+                <label>
+                  <span>Destination</span>
+                  <input
+                    type="text"
+                    value={planningForm.destination}
+                    onChange={(e) => setPlanningForm(p => ({ ...p, destination: e.target.value }))}
+                    placeholder="e.g., Jaipur, India"
+                    required
+                  />
+                </label>
+                <label>
+                  <span>Start Date</span>
+                  <input
+                    type="date"
+                    value={planningForm.startDate}
+                    onChange={(e) => setPlanningForm(p => ({ ...p, startDate: e.target.value }))}
+                    required
+                  />
+                </label>
+                <label>
+                  <span>Days</span>
+                  <input
+                    type="number"
+                    min="1"
+                    max="14"
+                    value={planningForm.days}
+                    onChange={(e) => setPlanningForm(p => ({ ...p, days: e.target.value }))}
+                    required
+                  />
+                </label>
+                <label>
+                  <span>Budget</span>
+                  <select
+                    value={planningForm.budget}
+                    onChange={(e) => setPlanningForm(p => ({ ...p, budget: e.target.value }))}
+                  >
+                    <option value="low">Low</option>
+                    <option value="mid">Mid</option>
+                    <option value="high">High</option>
+                  </select>
+                </label>
+                <label>
+                  <span>Travelers</span>
+                  <input
+                    type="number"
+                    min="1"
+                    max="10"
+                    value={planningForm.travelers}
+                    onChange={(e) => setPlanningForm(p => ({ ...p, travelers: e.target.value }))}
+                  />
+                </label>
+                <label>
+                  <span>Pace</span>
+                  <select
+                    value={planningForm.pace}
+                    onChange={(e) => setPlanningForm(p => ({ ...p, pace: e.target.value }))}
+                  >
+                    <option value="relaxed">Relaxed</option>
+                    <option value="balanced">Balanced</option>
+                    <option value="packed">Packed</option>
+                  </select>
+                </label>
+                <label className="planner-full">
+                  <span>Interests (comma separated)</span>
+                  <input
+                    type="text"
+                    value={planningForm.interests}
+                    onChange={(e) => setPlanningForm(p => ({ ...p, interests: e.target.value }))}
+                    placeholder="temples, beaches, food, shopping"
+                  />
+                </label>
+              </div>
+              <div className="planner-actions">
+                <button type="submit" disabled={isGenerating} className="generate-btn">
+                  {isGenerating ? 'Generating...' : 'Generate Itinerary'}
+                </button>
+                <button type="button" className="cancel-btn" onClick={() => setShowPlanner(false)}>Close</button>
+              </div>
+              {planError && <div className="planner-error">{planError}</div>}
+            </form>
+
+            {itinerary && (
+              <div className="itinerary-output">
+                <h3>{itinerary.city} — {itinerary.days} days</h3>
+                <div className="days-list">
+                  {Array.isArray(itinerary.itinerary) && itinerary.itinerary.map((day) => (
+                    <div key={day.day} className="day-card">
+                      <div className="day-header">
+                        <div className="day-title">Day {day.day} — {new Date(day.date).toLocaleDateString()}</div>
+                        {day.summary && <div className="day-summary">{day.summary}</div>}
+                      </div>
+                      <div className="timeline">
+                        {Array.isArray(day.items) && day.items.map((item, idx) => (
+                          <div key={idx} className="timeline-item">
+                            <div className="time">{item.time}</div>
+                            <div className="content">
+                              <div className="title">{item.name}</div>
+                              {item.address && <div className="address">{item.address}</div>}
+                              {item.description && <div className="desc">{item.description}</div>}
+                              <div className="meta">
+                                <span className={`badge badge-${item.category || 'other'}`}>{item.type}</span>
+                                {typeof item.durationMins === 'number' && <span className="dot" />}
+                                {typeof item.durationMins === 'number' && <span>{item.durationMins} mins</span>}
+                              </div>
+                              {item.tips && <div className="tips">Tip: {item.tips}</div>}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="suggestions">
+                  {Array.isArray(itinerary.hotels) && itinerary.hotels.length > 0 && (
+                    <div className="suggestion-block">
+                      <h4>Suggested Hotels</h4>
+                      <ul>
+                        {itinerary.hotels.map((h, i) => (
+                          <li key={i}>
+                            <strong>{h.name}</strong>{h.address ? ` — ${h.address}` : ''}
+                            {h.priceRange ? ` • ${h.priceRange}` : ''} {typeof h.rating === 'number' ? ` • ⭐ ${h.rating}` : ''}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                  {Array.isArray(itinerary.restaurants) && itinerary.restaurants.length > 0 && (
+                    <div className="suggestion-block">
+                      <h4>Suggested Restaurants</h4>
+                      <ul>
+                        {itinerary.restaurants.map((r, i) => (
+                          <li key={i}>
+                            <strong>{r.name}</strong>{r.address ? ` — ${r.address}` : ''}
+                            {r.specialties ? ` • ${r.specialties}` : ''}
+                            {r.priceRange ? ` • ${r.priceRange}` : ''} {typeof r.rating === 'number' ? ` • ⭐ ${r.rating}` : ''}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+          </section>
+        )}
 
         {/* Destinations Section */}
         <section className="destinations-section">
