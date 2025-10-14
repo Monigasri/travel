@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import BackButton from "./BackButton";
 
 const ProfilePage = () => {
   const [user, setUser] = useState(null);
@@ -33,6 +34,7 @@ const ProfilePage = () => {
 
   return (
     <div style={{ maxWidth: 640, margin: '40px auto', padding: 24 }}>
+      <BackButton />
       <h1>Profile</h1>
       <div style={{ marginTop: 16 }}>
         {user.avatarUrl && (

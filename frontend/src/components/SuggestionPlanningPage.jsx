@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import '../styles/SuggestionPlanningPage.css';
+import BackButton from './BackButton';
 
 const SuggestionPlanningPage = ({ destination = 'Your Destination', onNavigate }) => {
   const [formData, setFormData] = useState({
@@ -25,6 +26,7 @@ const SuggestionPlanningPage = ({ destination = 'Your Destination', onNavigate }
 
   return (
     <div className="suggestion-planning-container">
+      <BackButton />
       <div className="planning-header">
         <h1>Plan your trip to {destination}</h1>
         {/* <div className="nav-buttons">
@@ -41,7 +43,7 @@ const SuggestionPlanningPage = ({ destination = 'Your Destination', onNavigate }
         <div className="form-container">
           <div className="destination-visual">
             <div className="destination-image">
-              <img 
+              <img
                 src={`https://images.pexels.com/photos/1591447/pexels-photo-1591447.jpeg?auto=compress&cs=tinysrgb&w=800`}
                 alt={destination}
               />

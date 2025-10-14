@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Navigation from "../components/Navigation";
+import BackButton from "./BackButton";
 import { MapPin, Star, DollarSign, Clock } from "lucide-react";
 import "../styles/SearchResult.css";
 
@@ -31,9 +32,9 @@ const SearchResult = () => {
       try {
         setLoading(true);
         setError(null);
-        
+
         console.log("Sending request to backend with query:", query);
-        
+
         // Prepare the prompt to get tourist information for the location
         const promptData = {
           query: `Provide detailed tourist information about ${query}. Include:
@@ -43,7 +44,7 @@ const SearchResult = () => {
           4. Famous restaurants with names, addresses, descriptions, specialties, price ranges, and ratings
           Format the response as a JSON object with these keys: touristSpots, dishes, hotels, restaurants`
         };
-        
+
         // Call our backend API
         const response = await fetch(
           "http://localhost:5000/api/groq/search",
@@ -56,19 +57,19 @@ const SearchResult = () => {
             credentials: "include", // Add credentials for CORS
           }
         );
-        
+
         console.log("Response status:", response.status);
-        
+
         if (!response.ok) {
           // Check if the response is HTML (common error case)
           const text = await response.text();
           console.error("Error response text:", text);
-          
+
           // If it looks like HTML, provide a clearer error
           if (text.includes('<!DOCTYPE') || text.includes('<html')) {
             throw new Error("Received HTML instead of JSON. The backend server might be returning a web page instead of API data.");
           }
-          
+
           // Try to parse as JSON if it doesn't look like HTML
           try {
             const errorData = JSON.parse(text);
@@ -83,7 +84,7 @@ const SearchResult = () => {
         // Get the response as text first to inspect it
         const responseText = await response.text();
         console.log("Raw response text:", responseText);
-        
+
         // Try to parse the response as JSON
         let data;
         try {
@@ -93,10 +94,10 @@ const SearchResult = () => {
           console.error("Error parsing response as JSON:", parseError);
           throw new Error(`Failed to parse response as JSON: ${responseText.substring(0, 100)}...`);
         }
-        
+
         // Handle different response formats
         let finalResults;
-        
+
         // Case 1: Direct structure with touristSpots, dishes, etc.
         if (data.touristSpots && data.dishes && data.hotels && data.restaurants) {
           console.log("Using direct response structure");
@@ -106,10 +107,10 @@ const SearchResult = () => {
         else if (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) {
           console.log("Using Groq API response format");
           const aiText = data.choices[0].message.content.trim();
-          
+
           try {
             const parsedContent = JSON.parse(aiText);
-            
+
             if (
               parsedContent.touristSpots &&
               parsedContent.dishes &&
@@ -131,7 +132,7 @@ const SearchResult = () => {
           console.error("Unexpected response format:", data);
           throw new Error("Unexpected response format from server");
         }
-        
+
         setResults(finalResults);
       } catch (error) {
         console.error(error);
@@ -325,7 +326,10 @@ const SearchResult = () => {
   return (
     <div className="search-results-page">
       <Navigation />
-      
+      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 24px' }}>
+        <BackButton />
+      </div>
+
       <div className="results-container">
         <div className="results-header-row">
           <h2 className="results-title">Search Results for "{query}"</h2>
@@ -333,7 +337,7 @@ const SearchResult = () => {
             {itineraryLoading ? 'Generating…' : 'Generate 3‑day Itinerary'}
           </button>
         </div>
-        
+
         {loading ? (
           <div className="loading">
             <div className="loading-spinner"></div>

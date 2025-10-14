@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, ArrowRight, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import Navigation from './Navigation';
+import BackButton from './BackButton';
 import Footer from './Footer';
 import '../styles/HomePage.css';
 import '../styles/InfoBox.css';
@@ -302,6 +303,7 @@ const HomePage = () => {
     <div className="home-container">
       <Navigation selectedCountry={selectedCountry} onCountryChange={setSelectedCountry} />
       <div className="home-content">
+        
         {/* Search Section */}
         <div className="search-section">
           <div className="search-container">
@@ -318,79 +320,79 @@ const HomePage = () => {
 
 
 
-       {/* Hero Section */}
+        {/* Hero Section */}
 
-<div style={{
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  minHeight: '80vh',
-  padding: '0 8%',
-  backgroundColor: '#f8f9fa',
-  gap: '60px',
-  fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
-}}>
-  {/* Animation Left Side */}
-  <div style={{
-    flex: '0 0 45%',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center'
-  }}>
-    <Lottie 
-      animationData={travelAnimation} 
-      loop={true}
-      style={{
-        width: '100%',
-        maxWidth: '800px',
-        height: 'auto'
-      }}
-    />
-  </div>
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          minHeight: '80vh',
+          padding: '0 8%',
+          backgroundColor: '#f8f9fa',
+          gap: '60px',
+          fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+        }}>
+          {/* Animation Left Side */}
+          <div style={{
+            flex: '0 0 45%',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center'
+          }}>
+            <Lottie
+              animationData={travelAnimation}
+              loop={true}
+              style={{
+                width: '100%',
+                maxWidth: '800px',
+                height: 'auto'
+              }}
+            />
+          </div>
 
-  {/* Content Right Side */}
-  <div style={{
-    flex: '1',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'flex-start',
-    textAlign: 'left',
-    paddingLeft: '40px'
-  }}>
-    <h1 style={{
-      fontSize: '3.5rem',
-      fontWeight: '700',
-      lineHeight: '0.9',
-      color: '#1a1a1a',
-      marginBottom: '30px',
-      letterSpacing: '-0.02em',
-      margin: '0 0 30px 0'
-    }}>
-      Smart
-      Trip
-      Planning
-      Made
-      Easy
-    </h1><br></br>
-    
-    <p style={{
-      fontSize: '1.2rem',
-      fontWeight: '325',
-      color: '#666666',
-      lineHeight: '1.4',
-      opacity: '0.9',
-      margin: '0',
-      marginLeft: '60px'
-    }}>
-      Plan your trips with
-      the best hotels,
-      food, and
-      sightseeing spots
-      in one place.
-    </p>
-  </div>
-</div>
+          {/* Content Right Side */}
+          <div style={{
+            flex: '1',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'flex-start',
+            textAlign: 'left',
+            paddingLeft: '40px'
+          }}>
+            <h1 style={{
+              fontSize: '3.5rem',
+              fontWeight: '700',
+              lineHeight: '0.9',
+              color: '#1a1a1a',
+              marginBottom: '30px',
+              letterSpacing: '-0.02em',
+              margin: '0 0 30px 0'
+            }}>
+              Smart
+              Trip
+              Planning
+              Made
+              Easy
+            </h1><br></br>
+
+            <p style={{
+              fontSize: '1.2rem',
+              fontWeight: '325',
+              color: '#666666',
+              lineHeight: '1.4',
+              opacity: '0.9',
+              margin: '0',
+              marginLeft: '60px'
+            }}>
+              Plan your trips with
+              the best hotels,
+              food, and
+              sightseeing spots
+              in one place.
+            </p>
+          </div>
+        </div>
 
 
 

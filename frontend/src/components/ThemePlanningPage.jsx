@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/ThemePlanningPage.css';
+import BackButton from './BackButton';
 
 const ThemePlanningPage = ({ onNavigate }) => {
   const [selectedTheme, setSelectedTheme] = useState('solo');
@@ -22,7 +23,7 @@ const ThemePlanningPage = ({ onNavigate }) => {
       title: 'Solo Travel',
       heroImage:
         'https://images.pexels.com/photos/962464/pexels-photo-962464.jpeg?auto=compress&cs=tinysrgb&w=1200',
-      
+
       destinations: [
         {
           name: 'Goa',
@@ -78,7 +79,7 @@ const ThemePlanningPage = ({ onNavigate }) => {
       title: 'Devotional Travel',
       heroImage:
         'https://images.pexels.com/photos/3573382/pexels-photo-3573382.jpeg?auto=compress&cs=tinysrgb&w=1200',
-      
+
       destinations: [
         {
           name: 'Tirupati',
@@ -134,7 +135,7 @@ const ThemePlanningPage = ({ onNavigate }) => {
       title: 'Educational Travel',
       heroImage:
         'https://images.pexels.com/photos/1542620/pexels-photo-1542620.jpeg?auto=compress&cs=tinysrgb&w=1200',
-      
+
       destinations: [
         {
           name: 'Agra',
@@ -190,7 +191,7 @@ const ThemePlanningPage = ({ onNavigate }) => {
       title: 'Inspirational Travel',
       heroImage:
         'https://images.pexels.com/photos/3408744/pexels-photo-3408744.jpeg?auto=compress&cs=tinysrgb&w=1200',
-      
+
       destinations: [
         {
           name: 'Varanasi',
@@ -257,6 +258,7 @@ const ThemePlanningPage = ({ onNavigate }) => {
 
   return (
     <div className="theme-planning-container">
+      <BackButton />
       <div className="planning-header">
         <h1>{themeDetails[selectedTheme].title}</h1>
         <p>{themeDetails[selectedTheme].about}</p>

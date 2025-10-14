@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Navigation from "./Navigation";
+import BackButton from "./BackButton";
 import Footer from "./Footer";
 import "../styles/FeedbackPage.css";
 
@@ -31,6 +32,9 @@ const FeedbackPage = () => {
   return (
     <div className="feedback-page">
       <Navigation />
+      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 24px' }}>
+        <BackButton />
+      </div>
 
       <div className="feedback-container">
         <h1>User Feedbacks</h1>

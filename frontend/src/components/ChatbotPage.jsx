@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Navigation from './Navigation';
+import BackButton from './BackButton';
 import { Send, User, Bot } from 'lucide-react';
 import '../styles/ChatbotPage.css';
 
@@ -21,15 +22,15 @@ const ChatbotPage = () => {
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
-    
+
     if (!input.trim()) return;
-    
+
     // Add user message to chat
     const userMessage = { role: 'user', content: input };
     setMessages(prev => [...prev, userMessage]);
     setInput('');
     setIsLoading(true);
-    
+
     try {
       // Send message to backend
       const response = await fetch('http://localhost:5000/api/chatbot', {
@@ -39,20 +40,20 @@ const ChatbotPage = () => {
         },
         body: JSON.stringify({ message: input }),
       });
-      
+
       if (!response.ok) {
         throw new Error('Failed to get response from chatbot');
       }
-      
+
       const data = await response.json();
-      
+
       // Add bot response to chat
       setMessages(prev => [...prev, { role: 'bot', content: data.response }]);
     } catch (error) {
       console.error('Error:', error);
-      setMessages(prev => [...prev, { 
-        role: 'bot', 
-        content: 'Sorry, I encountered an error. Please try again later.' 
+      setMessages(prev => [...prev, {
+        role: 'bot',
+        content: 'Sorry, I encountered an error. Please try again later.'
       }]);
     } finally {
       setIsLoading(false);
@@ -62,17 +63,20 @@ const ChatbotPage = () => {
   return (
     <div className="chatbot-page">
       <Navigation />
-      
+      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 24px' }}>
+        {/* <BackButton /> */}
+      </div>
+
       <div className="chatbot-container">
         <div className="chatbot-header">
           <h1>Travel Assistant</h1>
           <p>Ask me anything about travel planning, destinations, or recommendations!</p>
         </div>
-        
+
         <div className="chat-messages">
           {messages.map((message, index) => (
-            <div 
-              key={index} 
+            <div
+              key={index}
               className={`message ${message.role === 'user' ? 'user-message' : 'bot-message'}`}
             >
               <div className="message-icon">
@@ -81,7 +85,7 @@ const ChatbotPage = () => {
               <div className="message-content">{message.content}</div>
             </div>
           ))}
-          
+
           {isLoading && (
             <div className="message bot-message">
               <div className="message-icon">
@@ -94,10 +98,10 @@ const ChatbotPage = () => {
               </div>
             </div>
           )}
-          
+
           <div ref={messagesEndRef} />
         </div>
-        
+
         <form className="chat-input-form" onSubmit={handleSendMessage}>
           <input
             type="text"
@@ -106,8 +110,8 @@ const ChatbotPage = () => {
             placeholder="Type your message here..."
             disabled={isLoading}
           />
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             disabled={isLoading || !input.trim()}
           >
             <Send size={20} />

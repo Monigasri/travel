@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/ManualPlanningPage.css';
+import BackButton from './BackButton';
 import '../styles/Planner.css';
 
 const ManualPlanningPage = ({ onNavigate }) => {
@@ -24,11 +25,11 @@ const ManualPlanningPage = ({ onNavigate }) => {
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
-    
+
     if (type === 'checkbox') {
       setFormData(prev => ({
         ...prev,
-        interests: checked 
+        interests: checked
           ? [...prev.interests, value]
           : prev.interests.filter(interest => interest !== value)
       }));
@@ -88,12 +89,13 @@ const ManualPlanningPage = ({ onNavigate }) => {
   };
 
   const interestOptions = [
-    'Shopping', 'Local Culture', 'Temples', 'Beaches', 'Trekking', 
+    'Shopping', 'Local Culture', 'Temples', 'Beaches', 'Trekking',
     'Wildlife', 'Nature', 'Photography', 'Adventure Sports', 'Museums'
   ];
 
   return (
     <div className="manual-planning-container">
+      <BackButton />
       <div className="planning-header">
         <h1>Plan the trip</h1>
         {/* <div className="nav-buttons">

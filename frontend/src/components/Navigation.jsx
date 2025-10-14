@@ -1,5 +1,5 @@
 import React from 'react';
-import { MapPin, Globe, MessageSquare } from 'lucide-react';
+import { MapPin, Globe, MessageSquare, Home as HomeIcon, LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Navigation.css';
 
@@ -19,8 +19,17 @@ const Navigation = ({ selectedCountry = 'India', onCountryChange }) => {
         </div>
 
         <div className="nav-right-section">
+          {/* Home Button */}
+          <button
+            className="chatbot-button"
+            onClick={() => navigate('/home')}
+          >
+            <HomeIcon className="chatbot-icon" />
+            <span>Home</span>
+          </button>
+
           {/* Chatbot Button */}
-          <button 
+          <button
             className="chatbot-button"
             onClick={() => navigate('/chatbot')}
           >
@@ -43,6 +52,20 @@ const Navigation = ({ selectedCountry = 'India', onCountryChange }) => {
               ))}
             </select>
           </div>
+
+          {/* Logout Button */}
+          <button
+            className="chatbot-button"
+            onClick={async () => {
+              try {
+                await fetch('http://localhost:5000/auth/logout', { method: 'POST', credentials: 'include' });
+              } catch { }
+              navigate('/login');
+            }}
+          >
+            <LogOut className="chatbot-icon" />
+            <span>Logout</span>
+          </button>
         </div>
       </div>
     </nav>

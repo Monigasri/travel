@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { 
-  MapPin, 
-  Clock, 
-  IndianRupee, 
-  Camera, 
-  Navigation as NavigationIcon, 
-  Star, 
-  Phone, 
+import {
+  MapPin,
+  Clock,
+  IndianRupee,
+  Camera,
+  Navigation as NavigationIcon,
+  Star,
+  Phone,
   AlertTriangle,
   Utensils,
   Bed,
@@ -63,16 +63,14 @@ const ItineraryResultsPage = () => {
 
   const handleDownload = () => {
     // Simple download as text (could be enhanced to PDF)
-    const content = `${itinerary.city} - ${itinerary.days} Day Itinerary\n\n${
-      itinerary.itinerary.map(day => 
-        `Day ${day.day} - ${new Date(day.date).toLocaleDateString()}\n${day.summary}\n\n${
-          day.items.map(item => 
-            `${item.time} - ${item.name}\n${item.address}\n${item.description}\n`
-          ).join('\n')
-        }\n`
+    const content = `${itinerary.city} - ${itinerary.days} Day Itinerary\n\n${itinerary.itinerary.map(day =>
+      `Day ${day.day} - ${new Date(day.date).toLocaleDateString()}\n${day.summary}\n\n${day.items.map(item =>
+        `${item.time} - ${item.name}\n${item.address}\n${item.description}\n`
       ).join('\n')
-    }`;
-    
+      }\n`
+    ).join('\n')
+      }`;
+
     const blob = new Blob([content], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -88,9 +86,9 @@ const ItineraryResultsPage = () => {
       const d = new Date(dateStr);
       d.setHours(h || 9, m || 0, 0, 0);
       const pad = (n) => String(n).padStart(2, '0');
-      return `${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}T${pad(d.getHours())}${pad(d.getMinutes())}00`;
+      return `${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}T${pad(d.getHours())}${pad(d.getMinutes())}00`;
     } catch {
-      return `${dateStr.replaceAll('-','')}T090000`;
+      return `${dateStr.replaceAll('-', '')}T090000`;
     }
   };
 
@@ -100,7 +98,7 @@ const ItineraryResultsPage = () => {
     d.setHours(h || 9, m || 0, 0, 0);
     d.setMinutes(d.getMinutes() + (mins || 60));
     const pad = (n) => String(n).padStart(2, '0');
-    return `${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}T${pad(d.getHours())}${pad(d.getMinutes())}00`;
+    return `${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}T${pad(d.getHours())}${pad(d.getMinutes())}00`;
   };
 
   const handleDownloadICS = () => {
@@ -161,7 +159,7 @@ const ItineraryResultsPage = () => {
   return (
     <div className="itinerary-results">
       <Navigation />
-      
+
       <div className="results-container">
         {/* Header */}
         <div className="results-header">
@@ -174,7 +172,7 @@ const ItineraryResultsPage = () => {
               <h1>{itinerary.city}</h1>
               <p className="trip-duration">{itinerary.days} Days • {new Date(itinerary.startDate).toLocaleDateString()} onwards</p>
             </div>
-          <div className="header-actions">
+            <div className="header-actions">
               <button className="action-btn" onClick={handleShare}>
                 <Share2 size={18} />
                 Share
@@ -232,7 +230,7 @@ const ItineraryResultsPage = () => {
                               <span className="hidden-gem-badge">Hidden Gem</span>
                             )}
                           </div>
-                          <button 
+                          <button
                             className={`favorite-btn ${favorites.has(`${day.day}-${idx}`) ? 'active' : ''}`}
                             onClick={() => toggleFavorite(`${day.day}-${idx}`)}
                           >
@@ -247,7 +245,7 @@ const ItineraryResultsPage = () => {
                             <button className="mini-btn" onClick={() => openInMaps(item.name, item.address)}>Open in Maps</button>
                             <button className="mini-btn" onClick={() => copyAddress(item.address)}>Copy</button>
                           </div>
-                          
+
                           <p className="item-description">{item.description}</p>
 
                           <div className="item-metadata">
@@ -257,14 +255,14 @@ const ItineraryResultsPage = () => {
                                 <span>{item.entryFee}</span>
                               </div>
                             )}
-                            
+
                             {item.openingHours && (
                               <div className="metadata-item">
                                 <Clock size={14} />
                                 <span>{item.openingHours}</span>
                               </div>
                             )}
-                            
+
                             {item.durationMins && (
                               <div className="metadata-item">
                                 <span>{item.durationMins} mins</span>
@@ -286,7 +284,7 @@ const ItineraryResultsPage = () => {
                                 <span>{item.photoSpots}</span>
                               </div>
                             )}
-                            
+
                             {item.bestTimeToVisit && (
                               <div className="info-tag best-time">
                                 <Clock size={14} />
@@ -306,6 +304,145 @@ const ItineraryResultsPage = () => {
                     </div>
                   ))}
                 </div>
+                {/* Left column extra sections (moved from sidebar below Hidden Gems) */}
+                {/* Hotels */}
+                {itinerary.hotels?.length > 0 && (
+                  <div className="recommendation-section" style={{ margin: '24px' }}>
+                    <h3>
+                      <Bed size={18} />
+                      Recommended Hotels
+                    </h3>
+                    <div className="recommendations-list">
+                      {itinerary.hotels.map((hotel, i) => (
+                        <div key={i} className="recommendation-card hotel">
+                          <h4>{hotel.name}</h4>
+                          <p className="address">{hotel.address}</p>
+                          <div className="hotel-details">
+                            <span className="rating">
+                              <Star size={14} fill="gold" color="gold" />
+                              {hotel.rating}
+                            </span>
+                            <span className="price">{hotel.priceRange}</span>
+                          </div>
+                          {hotel.amenities && <p className="amenities">Amenities: {hotel.amenities}</p>}
+                          {hotel.bookingTip && (
+                            <div className="booking-tip">
+                              <Info size={12} />
+                              <span>{hotel.bookingTip}</span>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Restaurants */}
+                {itinerary.restaurants?.length > 0 && (
+                  <div className="recommendation-section" style={{ margin: '24px' }}>
+                    <h3>
+                      <Utensils size={18} />
+                      Must-Try Restaurants
+                    </h3>
+                    <div className="recommendations-list">
+                      {itinerary.restaurants.map((restaurant, i) => (
+                        <div key={i} className="recommendation-card restaurant">
+                          <h4>{restaurant.name}</h4>
+                          <p className="address">{restaurant.address}</p>
+                          <div className="restaurant-details">
+                            <span className="rating">
+                              <Star size={14} fill="gold" color="gold" />
+                              {restaurant.rating}
+                            </span>
+                            <span className="price">{restaurant.priceRange}</span>
+                            {restaurant.vegetarianOptions && (
+                              <span className="veg-indicator">🌱 Veg Options</span>
+                            )}
+                          </div>
+                          <p className="specialties">Specialties: {restaurant.specialties}</p>
+                          {restaurant.mustTry && (
+                            <div className="must-try">
+                              <strong>Must try:</strong> {restaurant.mustTry}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Local Information */}
+                {itinerary.localInfo && (
+                  <div className="recommendation-section local-info" style={{ margin: '24px' }}>
+                    <h3>
+                      <Info size={18} />
+                      Local Information
+                    </h3>
+                    <div className="info-cards">
+                      {itinerary.localInfo.emergencyContacts && (
+                        <div className="info-card emergency">
+                          <h4>
+                            <Phone size={16} />
+                            Emergency Contacts
+                          </h4>
+                          <div className="emergency-contacts">
+                            {itinerary.localInfo.emergencyContacts.police && (
+                              <p>Police: {itinerary.localInfo.emergencyContacts.police}</p>
+                            )}
+                            {itinerary.localInfo.emergencyContacts.medical && (
+                              <p>Medical: {itinerary.localInfo.emergencyContacts.medical}</p>
+                            )}
+                            {itinerary.localInfo.emergencyContacts.tourist && (
+                              <p>Tourist Helpline: {itinerary.localInfo.emergencyContacts.tourist}</p>
+                            )}
+                          </div>
+                        </div>
+                      )}
+
+                      <div className="info-grid">
+                        {itinerary.localInfo.currency && (
+                          <div className="info-item">
+                            <strong>Currency:</strong> {itinerary.localInfo.currency}
+                          </div>
+                        )}
+                        {itinerary.localInfo.language && (
+                          <div className="info-item">
+                            <strong>Language:</strong> {itinerary.localInfo.language}
+                          </div>
+                        )}
+                        {itinerary.localInfo.transportation && (
+                          <div className="info-item">
+                            <strong>Transportation:</strong> {itinerary.localInfo.transportation}
+                          </div>
+                        )}
+                      </div>
+
+                      {itinerary.localInfo.culturalTips && (
+                        <div className="info-card cultural">
+                          <h4>Cultural Tips</h4>
+                          <p>{itinerary.localInfo.culturalTips}</p>
+                        </div>
+                      )}
+
+                      {itinerary.localInfo.safetyTips && (
+                        <div className="info-card safety">
+                          <h4>
+                            <AlertTriangle size={16} />
+                            Safety Tips
+                          </h4>
+                          <p>{itinerary.localInfo.safetyTips}</p>
+                        </div>
+                      )}
+
+                      {itinerary.localInfo.weatherTips && (
+                        <div className="info-card weather">
+                          <h4>Weather Tips</h4>
+                          <p>{itinerary.localInfo.weatherTips}</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
             )
           ))}
@@ -369,8 +506,8 @@ const ItineraryResultsPage = () => {
                     )}
                     {itinerary.budget.sampleCosts && (
                       <div className="info-grid two-cols">
-                        {Object.entries(itinerary.budget.sampleCosts).map(([k,v]) => (
-                          <div key={k} className="info-item"><strong>{k.replace(/([A-Z])/g,' $1')}:</strong> {v}</div>
+                        {Object.entries(itinerary.budget.sampleCosts).map(([k, v]) => (
+                          <div key={k} className="info-item"><strong>{k.replace(/([A-Z])/g, ' $1')}:</strong> {v}</div>
                         ))}
                       </div>
                     )}
@@ -526,145 +663,6 @@ const ItineraryResultsPage = () => {
                       {gem.description && <p className="specialties">{gem.description}</p>}
                     </div>
                   ))}
-                </div>
-              </div>
-            )}
-
-            {/* Hotels */}
-            {itinerary.hotels?.length > 0 && (
-              <div className="recommendation-section">
-                <h3>
-                  <Bed size={18} />
-                  Recommended Hotels
-                </h3>
-                <div className="recommendations-list">
-                  {itinerary.hotels.map((hotel, i) => (
-                    <div key={i} className="recommendation-card hotel">
-                      <h4>{hotel.name}</h4>
-                      <p className="address">{hotel.address}</p>
-                      <div className="hotel-details">
-                        <span className="rating">
-                          <Star size={14} fill="gold" color="gold" />
-                          {hotel.rating}
-                        </span>
-                        <span className="price">{hotel.priceRange}</span>
-                      </div>
-                      {hotel.amenities && <p className="amenities">Amenities: {hotel.amenities}</p>}
-                      {hotel.bookingTip && (
-                        <div className="booking-tip">
-                          <Info size={12} />
-                          <span>{hotel.bookingTip}</span>
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Restaurants */}
-            {itinerary.restaurants?.length > 0 && (
-              <div className="recommendation-section">
-                <h3>
-                  <Utensils size={18} />
-                  Must-Try Restaurants
-                </h3>
-                <div className="recommendations-list">
-                  {itinerary.restaurants.map((restaurant, i) => (
-                    <div key={i} className="recommendation-card restaurant">
-                      <h4>{restaurant.name}</h4>
-                      <p className="address">{restaurant.address}</p>
-                      <div className="restaurant-details">
-                        <span className="rating">
-                          <Star size={14} fill="gold" color="gold" />
-                          {restaurant.rating}
-                        </span>
-                        <span className="price">{restaurant.priceRange}</span>
-                        {restaurant.vegetarianOptions && (
-                          <span className="veg-indicator">🌱 Veg Options</span>
-                        )}
-                      </div>
-                      <p className="specialties">Specialties: {restaurant.specialties}</p>
-                      {restaurant.mustTry && (
-                        <div className="must-try">
-                          <strong>Must try:</strong> {restaurant.mustTry}
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Local Information */}
-            {itinerary.localInfo && (
-              <div className="recommendation-section local-info">
-                <h3>
-                  <Info size={18} />
-                  Local Information
-                </h3>
-                <div className="info-cards">
-                  {itinerary.localInfo.emergencyContacts && (
-                    <div className="info-card emergency">
-                      <h4>
-                        <Phone size={16} />
-                        Emergency Contacts
-                      </h4>
-                      <div className="emergency-contacts">
-                        {itinerary.localInfo.emergencyContacts.police && (
-                          <p>Police: {itinerary.localInfo.emergencyContacts.police}</p>
-                        )}
-                        {itinerary.localInfo.emergencyContacts.medical && (
-                          <p>Medical: {itinerary.localInfo.emergencyContacts.medical}</p>
-                        )}
-                        {itinerary.localInfo.emergencyContacts.tourist && (
-                          <p>Tourist Helpline: {itinerary.localInfo.emergencyContacts.tourist}</p>
-                        )}
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="info-grid">
-                    {itinerary.localInfo.currency && (
-                      <div className="info-item">
-                        <strong>Currency:</strong> {itinerary.localInfo.currency}
-                      </div>
-                    )}
-                    {itinerary.localInfo.language && (
-                      <div className="info-item">
-                        <strong>Language:</strong> {itinerary.localInfo.language}
-                      </div>
-                    )}
-                    {itinerary.localInfo.transportation && (
-                      <div className="info-item">
-                        <strong>Transportation:</strong> {itinerary.localInfo.transportation}
-                      </div>
-                    )}
-                  </div>
-
-                  {itinerary.localInfo.culturalTips && (
-                    <div className="info-card cultural">
-                      <h4>Cultural Tips</h4>
-                      <p>{itinerary.localInfo.culturalTips}</p>
-                    </div>
-                  )}
-
-                  {itinerary.localInfo.safetyTips && (
-                    <div className="info-card safety">
-                      <h4>
-                        <AlertTriangle size={16} />
-                        Safety Tips
-                      </h4>
-                      <p>{itinerary.localInfo.safetyTips}</p>
-                    </div>
-                  )}
-
-                  {itinerary.localInfo.weatherTips && (
-                    <div className="info-card weather">
-                      <h4>Weather Tips</h4>
-                      <p>{itinerary.localInfo.weatherTips}</p>
-                    </div>
-                  )}
                 </div>
               </div>
             )}

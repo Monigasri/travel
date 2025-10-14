@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import '../styles/DetailedPage.css';
+import BackButton from './BackButton';
 
 const DetailedPage = ({ cityData }) => {
   const [selectedPlace, setSelectedPlace] = useState(null);
@@ -11,7 +12,7 @@ const DetailedPage = ({ cityData }) => {
     image: "https://images.pexels.com/photos/338515/pexels-photo-338515.jpeg?auto=compress&cs=tinysrgb&w=1200",
     highlights: [
       "Romantic atmosphere and charming streets",
-      "World-class museums and art galleries", 
+      "World-class museums and art galleries",
       "Exquisite French cuisine and wine",
       "Stunning architecture and monuments"
     ],
@@ -101,6 +102,9 @@ const DetailedPage = ({ cityData }) => {
 
   return (
     <div className="detailed-page">
+      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 24px' }}>
+        <BackButton />
+      </div>
       {/* Hero Section */}
       <div className="hero-section">
         <div className="hero-content">
@@ -133,8 +137,8 @@ const DetailedPage = ({ cityData }) => {
         <h2 className="section-title">Must-Visit Places</h2>
         <div className="places-grid">
           {data.places.map((place) => (
-            <div 
-              key={place.id} 
+            <div
+              key={place.id}
               className="place-card"
               onClick={() => handlePlaceClick(place)}
             >
