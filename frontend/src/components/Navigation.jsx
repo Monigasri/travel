@@ -37,21 +37,7 @@ const Navigation = ({ selectedCountry = 'India', onCountryChange }) => {
             <span>Chatbot</span>
           </button>
 
-          {/* Country Selector */}
-          <div className="country-selector">
-            <Globe className="globe-icon" />
-            <select
-              value={selectedCountry}
-              onChange={(e) => onCountryChange?.(e.target.value)}
-              className="country-select"
-            >
-              {countries.map((country) => (
-                <option key={country} value={country}>
-                  {country}
-                </option>
-              ))}
-            </select>
-          </div>
+          
 
           {/* Logout Button */}
           <button

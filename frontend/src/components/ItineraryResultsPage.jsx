@@ -47,19 +47,7 @@ const ItineraryResultsPage = () => {
     setFavorites(newFavorites);
   };
 
-  const handleShare = () => {
-    if (navigator.share) {
-      navigator.share({
-        title: `${itinerary?.city} Travel Itinerary`,
-        text: `Check out my ${itinerary?.days}-day trip plan for ${itinerary?.city}!`,
-        url: window.location.href,
-      });
-    } else {
-      // Fallback - copy to clipboard
-      navigator.clipboard.writeText(window.location.href);
-      alert('Link copied to clipboard!');
-    }
-  };
+  
 
   const handleDownload = () => {
     // Simple download as text (could be enhanced to PDF)
@@ -173,10 +161,7 @@ const ItineraryResultsPage = () => {
               <p className="trip-duration">{itinerary.days} Days • {new Date(itinerary.startDate).toLocaleDateString()} onwards</p>
             </div>
             <div className="header-actions">
-              <button className="action-btn" onClick={handleShare}>
-                <Share2 size={18} />
-                Share
-              </button>
+             
               <button className="action-btn" onClick={handleDownload}>
                 <Download size={18} />
                 Download
