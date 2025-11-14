@@ -3,6 +3,7 @@ import Navigation from './Navigation';
 import BackButton from './BackButton';
 import { Send, User, Bot } from 'lucide-react';
 import '../styles/ChatbotPage.css';
+import { apiFetch } from '../utils/api';
 
 const ChatbotPage = () => {
   const [messages, setMessages] = useState([
@@ -33,7 +34,7 @@ const ChatbotPage = () => {
 
     try {
       // Send message to backend
-      const response = await fetch('http://localhost:5000/api/chatbot', {
+      const response = await apiFetch('/api/chatbot', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

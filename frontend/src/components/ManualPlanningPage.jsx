@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import '../styles/ManualPlanningPage.css';
 import BackButton from './BackButton';
 import '../styles/Planner.css';
+import { apiFetch } from '../utils/api';
 
 const ManualPlanningPage = ({ onNavigate }) => {
   const navigate = useNavigate();
@@ -70,7 +71,7 @@ const ManualPlanningPage = ({ onNavigate }) => {
         interests: formData.interests,
       };
 
-      const res = await fetch('http://localhost:5000/api/itinerary', {
+      const res = await apiFetch('/api/itinerary', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)

@@ -8,9 +8,10 @@ const AuthCallback = () => {
     // Check if user is authenticated after OAuth callback
     const checkAuthStatus = async () => {
       try {
-        const response = await fetch('http://localhost:5000/auth/status', {
-          credentials: 'include'
-        });
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/auth/status`, {
+  credentials: 'include'
+});
+
         
         if (response.ok) {
           const data = await response.json();

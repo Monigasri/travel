@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Mail, Phone, MapPin, Facebook, Twitter, Instagram, Youtube } from 'lucide-react';
 import '../styles/Footer.css';
+import { apiUrl } from '../utils/api';
 
 const Footer = () => {
   const [contactForm, setContactForm] = useState({ name: '', email: '', message: '' });
@@ -13,7 +14,7 @@ const Footer = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch('http://localhost:5000/api/feedback', {
+      const res = await fetch(apiUrl('/api/feedback'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(contactForm),

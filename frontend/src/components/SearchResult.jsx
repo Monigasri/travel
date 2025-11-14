@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Navigation from "../components/Navigation";
+import { apiUrl, apiFetch } from '../utils/api';
 import BackButton from "./BackButton";
 import { MapPin, Star, DollarSign, Clock } from "lucide-react";
 import "../styles/SearchResult.css";
@@ -47,7 +48,7 @@ const SearchResult = () => {
 
         // Call our backend API
         const response = await fetch(
-          "http://localhost:5000/api/groq/search",
+          apiUrl('/api/groq/search'),
           {
             method: "POST",
             headers: {
@@ -305,7 +306,7 @@ const SearchResult = () => {
         pace: 'balanced',
         interests: []
       };
-      const res = await fetch('http://localhost:5000/api/itinerary', {
+      const res = await apiFetch('/api/itinerary', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)

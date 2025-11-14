@@ -15,7 +15,7 @@ const FeedbackPage = () => {
 
   const fetchFeedback = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/feedback");
+    const res = await fetch(apiUrl('/api/feedback'));
       if (!res.ok) throw new Error("Failed to fetch feedback");
       const data = await res.json();
       setFeedbacks(data);
@@ -60,3 +60,4 @@ const FeedbackPage = () => {
 };
 
 export default FeedbackPage;
+import { apiUrl } from '../utils/api';

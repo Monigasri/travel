@@ -439,11 +439,11 @@ const HomePage = () => {
                     .map(s => s.trim())
                     .filter(Boolean),
                 };
-                const res = await fetch('http://localhost:5000/api/itinerary', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify(payload)
-                });
+    const res = await apiFetch('/api/itinerary', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
                 if (!res.ok) {
                   const err = await res.json().catch(() => ({}));
                   throw new Error(err.error || 'Failed to generate itinerary');
@@ -780,3 +780,4 @@ const HomePage = () => {
 };
 
 export default HomePage;
+import { apiFetch } from '../utils/api';
