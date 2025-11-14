@@ -4,7 +4,7 @@ require('dotenv').config(); // Load environment variables FIRST
 const express = require('express');
 const session = require('express-session');
 const cors = require('cors');
-const passport = require('passport');
+// const passport = require('passport');
 const mongoose = require('mongoose');
 const path = require('path');
 
@@ -20,7 +20,7 @@ const Feedback = mongoose.model('Feedback', new mongoose.Schema({
   createdAt: { type: Date, default: Date.now }
 }));
 
-const authRoutes = require('./routes/auth');
+// const authRoutes = require('./routes/auth');
 const groqRoutes = require('./routes/groq');
 const chatbotRoutes = require('./routes/chatbot');
 
@@ -43,14 +43,16 @@ app.use(session({
   }
 }));
 
-app.use(passport.initialize());
-app.use(passport.session());
+// Disable passport in no-auth mode
+// app.use(passport.initialize());
+// app.use(passport.session());
 
-// Load Passport strategies after session
-require('./config/passport'); 
+// Disable Passport strategies in no-auth mode
+// require('./config/passport'); 
 
 // Routes
-app.use('/auth', authRoutes);
+// Remove /auth routes in no-auth mode
+// app.use('/auth', authRoutes);
 app.use('/api/groq', groqRoutes);
 app.use('/api/chatbot', chatbotRoutes);
 app.use('/api/itinerary', require('./routes/itinerary'));
